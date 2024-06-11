@@ -11,45 +11,25 @@ public class Main {
 
         try {
 
-            List<String> directory = Files.readAllLines(Paths.get("src/phonebook/directory.txt"));
-            List<String> find = Files.readAllLines(Paths.get("src/phonebook/find.txt"));
+            List<String> phoneBook = Files.readAllLines(Paths.get("src/phonebook/directory.txt"));
+            List<String> contactsToFind = Files.readAllLines(Paths.get("src/phonebook/find.txt"));
 
-            System.out.println("Start searching...");
+            System.out.println("Start searching (linear search)...");
 
-            long startTime = System.currentTimeMillis();
-            int foundCount = linearSearch(directory, find);
-            long endTime = System.currentTimeMillis();
-            long timeElapsed = endTime - startTime;
-            String timeFormatted = formatTime(timeElapsed);
+            long[] linearSearchResults = Search.linearSearch(phoneBook, contactsToFind);
+            long numberOfContactsFound = linearSearchResults[0];
+            long timeOfLinearSearch = linearSearchResults[1];
 
-            System.out.printf("Found %d / %d entries. Time taken: %s%n", foundCount, find.size(), timeFormatted);
+            String timeTaken = TimeFormatter.formatTime(linearSearchResults[1]);
+            System.out.printf("Found %d / %d entries. Time taken: %s%n", numberOfContactsFound, contactsToFind.size(), timeTaken);
+            System.out.println();
+
+            long bubbleSortTimeLimit = timeOfLinearSearch * 10;
+            List<String> sortedPhoneBook = Sort.bubbleSort(phoneBook, contactsToFind, bubbleSortTimeLimit);
 
         } catch (IOException e) {
             System.err.println("Error reading files: " + e.getMessage());
         }
     }
 
-    private static int linearSearch(List<String> directory, List<String> find) {
-
-        int foundCount = 0;
-
-        for (String target : find) {
-            for (String entry : directory) {
-                if (entry.contains(target)) {
-                    foundCount++;
-                    break;
-                }
-            }
-        }
-        return foundCount;
-    }
-
-    private static String formatTime(long milliseconds) {
-
-        long minutes = milliseconds / 60000;
-        long seconds = (milliseconds % 60000) / 1000;
-        long millis = milliseconds % 1000;
-
-        return String.format("%d min. %d sec. %d ms.", minutes, seconds, millis);
-    }
 }
