@@ -1,6 +1,8 @@
 package phonebook;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class Search {
 
@@ -19,7 +21,6 @@ public class Search {
         }
         return numberOfFoundContacts;
     }
-
 
     static int jumpSearch(List<String> sortedList, List<String> targets) {
 
@@ -69,18 +70,15 @@ public class Search {
         return count;
     }
 
-
     static int binarySearch(List<String> sortedList, List<String> targets) {
 
         int foundTargets = 0;
 
         for (String target : targets) {
-
             int lowPointer = 0;
             int highPointer = sortedList.size() - 1;
 
             while (lowPointer <= highPointer) {
-
                 int middlePosition = (lowPointer + highPointer) / 2;
 
                 String currentEntry = sortedList.get(middlePosition);
@@ -98,8 +96,15 @@ public class Search {
                 }
             }
         }
-
         return foundTargets;
     }
+
+    static int hashSearch(Set<PhoneBookContact> list, Set<PhoneBookContact> targets) {
+
+        Set<PhoneBookContact> intersection = new HashSet<>(list);
+        intersection.retainAll(targets);
+        return intersection.size();
+    }
+
 
 }

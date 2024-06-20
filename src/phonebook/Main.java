@@ -3,6 +3,7 @@ package phonebook;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.HashSet;
 import java.util.List;
 
 public class Main {
@@ -12,12 +13,13 @@ public class Main {
 
         try {
 
-            List<String> phoneBook = Files.readAllLines(Paths.get("src/phonebook/small_directory.txt"));
-            List<String> contactsToFind = Files.readAllLines(Paths.get("src/phonebook/small_find.txt"));
+            List<String> phoneBook = Files.readAllLines(Paths.get("src/phonebook/directory.txt"));
+            List<String> contactsToFind = Files.readAllLines(Paths.get("src/phonebook/find.txt"));
 
             performLinearSearch(phoneBook, contactsToFind);
             performBubbleSortAndJumpSearch(phoneBook, contactsToFind);
             performQuickSortAndBinarySearch(phoneBook, contactsToFind);
+            performHashSearch(phoneBook, contactsToFind);
 
         } catch (IOException e) {
             System.err.println("Error reading files: " + e.getMessage());
@@ -29,13 +31,13 @@ public class Main {
 
         System.out.println("Start searching (linear search)...");
 
-        long linearSearchStartTime = System.currentTimeMillis();
-        int linearSearchResults = Search.linearSearch(phoneBook, contactsToFind);
-        long linearSearchEndTime = System.currentTimeMillis();
-        long totalLinearSearchTime = linearSearchEndTime - linearSearchStartTime;
-        String linearSearchTime = Utils.formatTime(totalLinearSearchTime);
+        long searchStartTime = System.currentTimeMillis();
+        int searchResults = Search.linearSearch(phoneBook, contactsToFind);
+        long searchEndTime = System.currentTimeMillis();
+        long totalSearchTime = searchEndTime - searchStartTime;
+        String searchTime = Utils.formatTime(totalSearchTime);
 
-        System.out.printf("Found %d / %d entries. Time taken: %s%n", linearSearchResults, contactsToFind.size(), linearSearchTime);
+        System.out.printf("Found %d / %d entries. Time taken: %s%n", searchResults, contactsToFind.size(), searchTime);
         System.out.println();
     }
 
@@ -51,14 +53,14 @@ public class Main {
         String sortTime = Utils.formatTime(totalSortTime);
 
         long searchStartTime = System.currentTimeMillis();
-        int jumpSearchResults = Search.jumpSearch(sortedPhoneBook, contactsToFind);
+        int searchResults = Search.jumpSearch(sortedPhoneBook, contactsToFind);
         long searchEndTime = System.currentTimeMillis();
         long totalSearchTime = searchEndTime - searchStartTime;
         String searchTime = Utils.formatTime(totalSearchTime);
 
         String sortAndSearchTime = Utils.formatTime(totalSortTime + totalSearchTime);
 
-        System.out.printf("Found %d / %d entries. Time taken: %s%n", jumpSearchResults, contactsToFind.size(), sortAndSearchTime);
+        System.out.printf("Found %d / %d entries. Time taken: %s%n", searchResults, contactsToFind.size(), sortAndSearchTime);
         System.out.println("Sorting time: " + sortTime);
         System.out.println("Searching time: " + searchTime);
         System.out.println();
@@ -75,17 +77,40 @@ public class Main {
         String sortTime = Utils.formatTime(totalSortTime);
 
         long searchStartTime = System.currentTimeMillis();
-        int binarySearchResults = Search.binarySearch(sortedPhoneBook, contactsToFind);
+        int searchResults = Search.binarySearch(sortedPhoneBook, contactsToFind);
         long searchEndTime = System.currentTimeMillis();
         long totalSearchTime = searchEndTime - searchStartTime;
         String searchTime = Utils.formatTime(totalSearchTime);
 
         String totalTime = Utils.formatTime(totalSortTime + totalSearchTime);
 
-        System.out.printf("Found %d / %d entries. Time taken: %s%n", binarySearchResults, contactsToFind.size(), totalTime);
+        System.out.printf("Found %d / %d entries. Time taken: %s%n", searchResults, contactsToFind.size(), totalTime);
         System.out.println("Sorting time: " + sortTime);
         System.out.println("Searching time: " + searchTime);
         System.out.println();
+    }
+
+    private static void performHashSearch(List<String> phoneBook, List<String> contactsToFind) {
+
+        System.out.println("Start searching (hash table)...");
+        long creationStartTime = System.currentTimeMillis();
+        HashSet<PhoneBookContact> hashPhoneBook = Utils.convertToHashSet(phoneBook);
+        HashSet<PhoneBookContact> hashTargets = Utils.convertToHashSet(contactsToFind);
+        long creationEndTime = System.currentTimeMillis();
+        long totalCreationTime = creationEndTime - creationStartTime;
+        String creationTime = Utils.formatTime(totalCreationTime);
+
+        long searchStartTime = System.currentTimeMillis();
+        int searchResults = Search.hashSearch(hashPhoneBook, hashTargets);
+        long searchEndTime = System.currentTimeMillis();
+        long totalSearchTime = searchEndTime - searchStartTime;
+        String searchTime = Utils.formatTime(totalSearchTime);
+
+        String totalTime = Utils.formatTime(totalCreationTime + totalSearchTime);
+
+        System.out.printf("Found %d / %d entries. Time taken: %s%n", searchResults, contactsToFind.size(), totalTime);
+        System.out.println("Creating time: " + creationTime);
+        System.out.println("Searching time: " + searchTime);
     }
 
 }

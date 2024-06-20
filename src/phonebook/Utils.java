@@ -1,5 +1,8 @@
 package phonebook;
 
+import java.util.HashSet;
+import java.util.List;
+
 class Utils {
 
     static String formatTime(long milliseconds) {
@@ -11,17 +14,34 @@ class Utils {
         return String.format("%d min. %d sec. %d ms.", minutes, seconds, millis);
     }
 
+    static String extractPhoneNumber(String entry) {
+
+        String[] parts = entry.split(" ", 2);
+        return parts[0];
+    }
+
     static String extractName(String entry) {
 
-        StringBuilder fullName = new StringBuilder();
-        String[] parts = entry.split(" "); // Split by whitespace
+        String[] parts = entry.split(" ", 2); // Split by first space only
+        return parts[1];
+    }
 
-        for (int i = 1; i < parts.length; i++) {
-            fullName.append(parts[i]);
-            if (i < parts.length - 1) {  // Append space only if it's not the last part
-                fullName.append(" ");
+    static HashSet<PhoneBookContact> convertToHashSet(List<String> list) {
+
+        HashSet<PhoneBookContact> contactsHashSet = new HashSet<>();
+
+        if (list.get(0).matches(".*\\d.*")) {
+            for (String entry : list) {
+                String number = Utils.extractPhoneNumber(entry);
+                String name = Utils.extractName(entry);
+                contactsHashSet.add(new PhoneBookContact(number, name));
+            }
+        } else {
+            for (String entry : list) {
+                contactsHashSet.add(new PhoneBookContact(null, entry));
             }
         }
-        return fullName.toString();
+
+        return contactsHashSet;
     }
 }
