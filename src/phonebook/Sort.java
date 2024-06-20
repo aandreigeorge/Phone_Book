@@ -2,45 +2,102 @@ package phonebook;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 class Sort {
 
-    static List<String> bubbleSort(List<String> phoneBook, List<String> contactsToFind, long timeLimit) {
 
-        System.out.println("Start searching (bubble sort + jump search)...");
+    static List<String> bubbleSort(List<String> unsortedList) {
 
-        List<String> sortedPhoneBook = new ArrayList<>(phoneBook);
-        long startTime = System.currentTimeMillis();
+        List<String> sortedList = new ArrayList<>(unsortedList);
 
-        for (int j = 0; j < sortedPhoneBook.size() - 1; j++) {
-            for (int i = 0; i < sortedPhoneBook.size() - 1 - j; i++) {
-                if (sortedPhoneBook.get(i).compareTo(sortedPhoneBook.get(i + 1)) > 0) {
-                    String temp = sortedPhoneBook.get(i);
-                    sortedPhoneBook.set(i, sortedPhoneBook.get(i + 1));
-                    sortedPhoneBook.set(i + 1, temp);
+        boolean swapping = true;
+        int iterations = sortedList.size() - 1;
+
+        while (swapping) {
+
+            swapping = false;
+
+            for (int i = 0; i < iterations; i++) {
+
+                String name1 = NameExtractor.extractName(sortedList.get(i));
+                String name2 = NameExtractor.extractName(sortedList.get(i + 1));
+
+                if (name1.compareTo(name2) > 0) {
+                    String temp = sortedList.get(i);
+                    sortedList.set(i, sortedList.get(i + 1));
+                    sortedList.set(i + 1, temp);
+                    swapping = true;
                 }
             }
+            iterations--;
         }
 
-        long sortingTime = System.currentTimeMillis() - startTime;
-
-        long[] jumpSearchResults = Search.jumpSearch(sortedPhoneBook, contactsToFind);
-        long numberOfContactsFound = jumpSearchResults[0];
-        long searchingTime = jumpSearchResults[1];
-
-        String totalTime = TimeFormatter.formatTime(sortingTime + searchingTime);
-
-        System.out.printf("Found %d / %d entries. Time taken: %s%n", numberOfContactsFound, contactsToFind.size(), totalTime);
-
-        if(sortingTime < timeLimit) {
-            System.out.println("Sorting time: " + TimeFormatter.formatTime(sortingTime));
-            System.out.println("Searching time: " + TimeFormatter.formatTime(searchingTime));
-
-        } else {
-            System.out.println("Sorting time: " + TimeFormatter.formatTime(sortingTime) + " - STOPPED, moved to linear search");
-            System.out.println("Searching time: " + TimeFormatter.formatTime(searchingTime));
-        }
-
-        return sortedPhoneBook;
+        return sortedList;
     }
+
+
+    static List<String> quickSort(List<String> unsortedList) {
+
+        List<String> sortedList = new ArrayList<>(unsortedList);
+        quickSort(sortedList, 0, sortedList.size() - 1);
+        return sortedList;
+    }
+
+
+    private static void quickSort(List<String> list, int lowIndex, int highIndex) {
+
+        if (lowIndex >= highIndex) {
+            return;
+        }
+
+        int pivotIndex = new Random().nextInt(highIndex - lowIndex) + lowIndex;
+        String pivot = list.get(pivotIndex);
+        swapElementsInList(list, pivotIndex, highIndex);
+
+        int leftPointer = partition(list, lowIndex, highIndex, pivot);
+
+        quickSort(list, lowIndex, leftPointer - 1);
+        quickSort(list, leftPointer + 1, highIndex);
+    }
+
+
+    private static int partition(List<String> list, int lowIndex, int highIndex, String pivot) {
+
+        int leftPointer = lowIndex;
+        int rightPointer = highIndex;
+
+        String pivotName = NameExtractor.extractName(pivot);
+
+        while (leftPointer < rightPointer) {
+
+            String nameOnLeft = NameExtractor.extractName(list.get(leftPointer));
+            while ((nameOnLeft.compareTo(pivotName) <= 0) && (leftPointer < rightPointer)) {
+                leftPointer++;
+                nameOnLeft = NameExtractor.extractName(list.get(leftPointer));
+            }
+
+            String nameOnRight = NameExtractor.extractName(list.get(rightPointer));
+            while ((nameOnRight.compareTo(pivotName) >= 0) && (leftPointer < rightPointer)) {
+                rightPointer--;
+                nameOnRight = NameExtractor.extractName(list.get(rightPointer));
+            }
+
+            swapElementsInList(list, leftPointer, rightPointer);
+
+        }
+        swapElementsInList(list, leftPointer, highIndex);
+
+        return leftPointer;
+    }
+
+
+    private static void swapElementsInList(List<String> list, int firstElement, int secondElement) {
+
+        String temp = list.get(firstElement);
+        list.set(firstElement, list.get(secondElement));
+        list.set(secondElement, temp);
+    }
+
+
 }

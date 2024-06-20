@@ -5,61 +5,101 @@ import java.util.List;
 public class Search {
 
 
-    static long[] linearSearch(List<String> phoneBook, List<String> contactsToFind) {
+    static int linearSearch(List<String> randomOrderList, List<String> targets) {
 
-        long startTime = System.currentTimeMillis();
-        long foundCount = 0L;
+        int numberOfFoundContacts = 0;
 
-        for (String contactToFind : contactsToFind) {
-            for (String entry : phoneBook) {
+        for (String contactToFind : targets) {
+            for (String entry : randomOrderList) {
                 if (entry.contains(contactToFind)) {
-                    foundCount++;
+                    numberOfFoundContacts++;
                     break;
                 }
             }
         }
-
-        return new long[] {foundCount, System.currentTimeMillis() - startTime};
+        return numberOfFoundContacts;
     }
 
 
-    static long[] jumpSearch(List<String> list, List<String> targets) {
+    public static int jumpSearch(List<String> sortedList, List<String> targets) {
 
-        long elementsFound = 0L;
-        long startTime = System.currentTimeMillis();
-
-        int n = list.size();
-        int step = (int) Math.floor(Math.sqrt(n));
+        int count = 0;
+        int listSize = sortedList.size();
+        /*jumpStep represents the size of the jump or the block size that the algorithm jumps ahead in each iteration.*/
+        int jumpStep = (int) Math.floor(Math.sqrt(listSize));
 
         for (String target : targets) {
-            int prev = 0;
+            /* prevIndex is used to keep track of the starting index of the current block or segment being examined during the jump search.
+            It helps determine where the linear search should start within the current block after the jump. */
+            int prevIndex = 0;
 
-            // Finding the block where the element is present
-            while (list.get(Math.min(step, n) - 1).compareTo(target) < 0) {
-                prev = step;
-                step += (int) Math.floor(Math.sqrt(n));
-                if (prev >= n) {
-                    break; // Element not found
+            /* Jumping blocks to find the block where the target might be */
+            while (prevIndex < listSize) {
+                int currentIndex = Math.min(jumpStep, listSize) - 1;
+                String currentName = NameExtractor.extractName(sortedList.get(currentIndex));
+
+                if (currentName.compareTo(target) >= 0) {
+                    break;
                 }
+                prevIndex = jumpStep;
+                jumpStep += jumpStep;
+                /* Use jumpStep += jumpStep if you want to maximize the speed of the jump search algorithm. This approach is often more efficient
+                for larger lists because it rapidly increases the jump distance, reducing the number of jumps needed to locate the target. */
+
+                /* Use jumpStep += (int) Math.floor(Math.sqrt(listSize)); if you prefer a more cautious approach that gradually increases the jump size.
+                 This method is still effective but may require more iterations to find the target compared to doubling the step size.*/
             }
 
-            // Linear search in the found block
-            while (list.get(prev).compareTo(target) < 0) {
-                prev++;
-
-                // If we reach the next block or end of list, the element is not present
-                if (prev == Math.min(step, n)) {
-                    break; // Element not found
-                }
+            /* Extract the string variable outside the if declaration */
+            String prevName = prevIndex < listSize ? NameExtractor.extractName(sortedList.get(prevIndex)) : null;
+            if (prevName != null && prevName.contains(target)) {
+                count++;
+                continue;
             }
 
-            // If the element is found
-            if (list.get(prev).equals(target)) {
-                elementsFound++;
+            /* Linear search within the block with extracted string variable */
+            for (int i = prevIndex; i < Math.min(jumpStep, listSize); i++) {
+                String currentName = NameExtractor.extractName(sortedList.get(i));
+                if (currentName.contains(target)) {
+                    count++;
+                    break;
+                }
+            }
+        }
+        return count;
+    }
 
+
+    static int binarySearch(List<String> sortedList, List<String> targets) {
+
+        int foundTargets = 0;
+
+        for (String target : targets) {
+
+            int lowPointer = 0;
+            int highPointer = sortedList.size() - 1;
+
+            while (lowPointer <= highPointer) {
+
+                int middlePosition = (lowPointer + highPointer) / 2;
+
+                String currentEntry = sortedList.get(middlePosition);
+                String currentName = NameExtractor.extractName(currentEntry);
+
+                if (currentName.contains(target)) {
+                    foundTargets++;
+                    break;
+                }
+
+                if (target.compareTo(currentName) < 0) {
+                    highPointer = middlePosition - 1;
+                } else {
+                    lowPointer = middlePosition + 1;
+                }
             }
         }
 
-        return new long[] {elementsFound, System.currentTimeMillis() - startTime};
+        return foundTargets;
     }
+
 }
