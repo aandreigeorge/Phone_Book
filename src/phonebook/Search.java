@@ -21,7 +21,7 @@ public class Search {
     }
 
 
-    public static int jumpSearch(List<String> sortedList, List<String> targets) {
+    static int jumpSearch(List<String> sortedList, List<String> targets) {
 
         int count = 0;
         int listSize = sortedList.size();
@@ -36,7 +36,7 @@ public class Search {
             /* Jumping blocks to find the block where the target might be */
             while (prevIndex < listSize) {
                 int currentIndex = Math.min(jumpStep, listSize) - 1;
-                String currentName = NameExtractor.extractName(sortedList.get(currentIndex));
+                String currentName = Utils.extractName(sortedList.get(currentIndex));
 
                 if (currentName.compareTo(target) >= 0) {
                     break;
@@ -51,7 +51,7 @@ public class Search {
             }
 
             /* Extract the string variable outside the if declaration */
-            String prevName = prevIndex < listSize ? NameExtractor.extractName(sortedList.get(prevIndex)) : null;
+            String prevName = prevIndex < listSize ? Utils.extractName(sortedList.get(prevIndex)) : null;
             if (prevName != null && prevName.contains(target)) {
                 count++;
                 continue;
@@ -59,7 +59,7 @@ public class Search {
 
             /* Linear search within the block with extracted string variable */
             for (int i = prevIndex; i < Math.min(jumpStep, listSize); i++) {
-                String currentName = NameExtractor.extractName(sortedList.get(i));
+                String currentName = Utils.extractName(sortedList.get(i));
                 if (currentName.contains(target)) {
                     count++;
                     break;
@@ -84,7 +84,7 @@ public class Search {
                 int middlePosition = (lowPointer + highPointer) / 2;
 
                 String currentEntry = sortedList.get(middlePosition);
-                String currentName = NameExtractor.extractName(currentEntry);
+                String currentName = Utils.extractName(currentEntry);
 
                 if (currentName.contains(target)) {
                     foundTargets++;

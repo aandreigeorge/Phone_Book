@@ -33,7 +33,7 @@ public class Main {
         int linearSearchResults = Search.linearSearch(phoneBook, contactsToFind);
         long linearSearchEndTime = System.currentTimeMillis();
         long totalLinearSearchTime = linearSearchEndTime - linearSearchStartTime;
-        String linearSearchTime = TimeFormatter.formatTime(totalLinearSearchTime);
+        String linearSearchTime = Utils.formatTime(totalLinearSearchTime);
 
         System.out.printf("Found %d / %d entries. Time taken: %s%n", linearSearchResults, contactsToFind.size(), linearSearchTime);
         System.out.println();
@@ -48,15 +48,15 @@ public class Main {
         List<String> sortedPhoneBook = Sort.bubbleSort(phoneBook);
         long sortEndTime = System.currentTimeMillis();
         long totalSortTime = sortEndTime - sortStartTime;
-        String sortTime = TimeFormatter.formatTime(totalSortTime);
+        String sortTime = Utils.formatTime(totalSortTime);
 
         long searchStartTime = System.currentTimeMillis();
         int jumpSearchResults = Search.jumpSearch(sortedPhoneBook, contactsToFind);
         long searchEndTime = System.currentTimeMillis();
         long totalSearchTime = searchEndTime - searchStartTime;
-        String searchTime = TimeFormatter.formatTime(totalSearchTime);
+        String searchTime = Utils.formatTime(totalSearchTime);
 
-        String sortAndSearchTime = TimeFormatter.formatTime(totalSortTime + totalSearchTime);
+        String sortAndSearchTime = Utils.formatTime(totalSortTime + totalSearchTime);
 
         System.out.printf("Found %d / %d entries. Time taken: %s%n", jumpSearchResults, contactsToFind.size(), sortAndSearchTime);
         System.out.println("Sorting time: " + sortTime);
@@ -72,15 +72,15 @@ public class Main {
         List<String> sortedPhoneBook = Sort.quickSort(phoneBook);
         long sortEndTime = System.currentTimeMillis();
         long totalSortTime = sortEndTime - sortStartTime;
-        String sortTime = TimeFormatter.formatTime(totalSortTime);
+        String sortTime = Utils.formatTime(totalSortTime);
 
         long searchStartTime = System.currentTimeMillis();
         int binarySearchResults = Search.binarySearch(sortedPhoneBook, contactsToFind);
         long searchEndTime = System.currentTimeMillis();
         long totalSearchTime = searchEndTime - searchStartTime;
-        String searchTime = TimeFormatter.formatTime(totalSearchTime);
+        String searchTime = Utils.formatTime(totalSearchTime);
 
-        String totalTime = TimeFormatter.formatTime(totalSortTime + totalSearchTime);
+        String totalTime = Utils.formatTime(totalSortTime + totalSearchTime);
 
         System.out.printf("Found %d / %d entries. Time taken: %s%n", binarySearchResults, contactsToFind.size(), totalTime);
         System.out.println("Sorting time: " + sortTime);

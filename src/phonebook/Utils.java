@@ -1,9 +1,17 @@
 package phonebook;
 
-public class NameExtractor {
+class Utils {
 
+    static String formatTime(long milliseconds) {
 
-    public static String extractName(String entry) {
+        long minutes = milliseconds / 60000;
+        long seconds = (milliseconds % 60000) / 1000;
+        long millis = milliseconds % 1000;
+
+        return String.format("%d min. %d sec. %d ms.", minutes, seconds, millis);
+    }
+
+    static String extractName(String entry) {
 
         StringBuilder fullName = new StringBuilder();
         String[] parts = entry.split(" "); // Split by whitespace
@@ -16,5 +24,4 @@ public class NameExtractor {
         }
         return fullName.toString();
     }
-
 }

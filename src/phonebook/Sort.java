@@ -20,8 +20,8 @@ class Sort {
 
             for (int i = 0; i < iterations; i++) {
 
-                String name1 = NameExtractor.extractName(sortedList.get(i));
-                String name2 = NameExtractor.extractName(sortedList.get(i + 1));
+                String name1 = Utils.extractName(sortedList.get(i));
+                String name2 = Utils.extractName(sortedList.get(i + 1));
 
                 if (name1.compareTo(name2) > 0) {
                     String temp = sortedList.get(i);
@@ -67,20 +67,20 @@ class Sort {
         int leftPointer = lowIndex;
         int rightPointer = highIndex;
 
-        String pivotName = NameExtractor.extractName(pivot);
+        String pivotName = Utils.extractName(pivot);
 
         while (leftPointer < rightPointer) {
 
-            String nameOnLeft = NameExtractor.extractName(list.get(leftPointer));
+            String nameOnLeft = Utils.extractName(list.get(leftPointer));
             while ((nameOnLeft.compareTo(pivotName) <= 0) && (leftPointer < rightPointer)) {
                 leftPointer++;
-                nameOnLeft = NameExtractor.extractName(list.get(leftPointer));
+                nameOnLeft = Utils.extractName(list.get(leftPointer));
             }
 
-            String nameOnRight = NameExtractor.extractName(list.get(rightPointer));
+            String nameOnRight = Utils.extractName(list.get(rightPointer));
             while ((nameOnRight.compareTo(pivotName) >= 0) && (leftPointer < rightPointer)) {
                 rightPointer--;
-                nameOnRight = NameExtractor.extractName(list.get(rightPointer));
+                nameOnRight = Utils.extractName(list.get(rightPointer));
             }
 
             swapElementsInList(list, leftPointer, rightPointer);
